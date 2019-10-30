@@ -55,6 +55,7 @@ if (isset($_GET['username'])) {
 		if (isset($_GET['postid'])) {
 			Post::likePost($_GET['postid'], $followerid);
 		}
+		//display posts
 		$posts = Post::displayPosts($userid, $username, $followerid);
 	} else {
 		die('User not found!');
