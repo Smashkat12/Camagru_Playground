@@ -4,9 +4,9 @@ include('./classes/login.inc.php');
 include('./classes/post.inc.php');
 include('./classes/comment.inc.php');
 
-$userid = Login::isLoggedin();
 $showTimeline = false;
-if ($userid) {
+if (Login::isLoggedin()) {
+	$userid = Login::isLoggedin();
 	$showTimeline = true;
 } else {
 	echo "Not Logged in";
@@ -33,6 +33,9 @@ foreach($followingposts as $post) {
 		<textarea name='commentbody' cols='50' rows='3'></textarea>
 		<input type='submit' name='comment' value='Comment'>
 		</form>
+		";
+		Comment::displayComment($post['id']);
+		echo "
 		<hr /></br />";
 
 		

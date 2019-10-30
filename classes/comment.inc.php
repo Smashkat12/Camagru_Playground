@@ -14,4 +14,12 @@ class Comment {
 			DB::query('INSERT INTO comments VALUES (NULL, :comment, :userid, NOW(), :postid)', array(':comment'=>$commentBody, ':userid'=>$userId, ':postid'=>$postId));
 		}
 	}
+
+	public static function displayComment($postId) {
+		$comments = DB::query('SELECT comments.comment, users.username FROM comments, users WHERE post_id=:postid AND comments.user_id=users.id', array(':postid'=>$postId));
+		foreach($comments as $comment) {
+			echo $comment['comment']." ~ ".$comment['username']."<p></p>";
+			
+		}
+	}
 }
