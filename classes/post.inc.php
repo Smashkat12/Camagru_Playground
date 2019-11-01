@@ -16,7 +16,7 @@ class Post
 	}
 	public static function likePost ($postid, $likerId) {
 		//check if user has already liked the post or not
-		if (!DB::query('SELECT user_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $_GET['postid'], ':userid' => $likerId))) {
+		if (!DB::query('SELECT user_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $postid, ':userid' => $likerId))) {
 			DB::query('UPDATE posts SET likes=likes+1 WHERE id=:postid', array(':postid' => $postid));
 			//tell us which user liked the post
 			DB::query('INSERT INTO post_likes VALUES (NULL, :postid, :userid)', array(':postid' => $postid, ':userid' => $likerId));
