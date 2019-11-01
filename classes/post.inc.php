@@ -9,7 +9,21 @@ class Post
 		}
 
 		if ($loggedInUserId == $profileUserId) {
-			DB::query('INSERT INTO posts VALUES (NULL, :postbody, NOW(), :userid, 0)', array(':postbody' => $postbody, ':userid' => $profileUserId));
+			DB::query('INSERT INTO posts VALUES (NULL, :postbody, NOW(), :userid, 0, NULL)', array(':postbody' => $postbody, ':userid' => $profileUserId));
+		} else {
+			die('Incorrect user!: Cant post on other users page');
+		}
+	}
+	public static function createImgPost($postbody, $loggedInUserId, $profileUserId)
+	{
+		if (strlen($postbody) > 160) {
+			die('Incorrect Length of text: 1 - 160 chars requred');
+		}
+
+		if ($loggedInUserId == $profileUserId) {
+			DB::query('INSERT INTO posts VALUES (NULL, :postbody, NOW(), :userid, 0, NULL)', array(':postbody' => $postbody, ':userid' => $profileUserId));
+			$postid = DB::query('SELECT id FROM posts WHERE user_id=:userid ORDER BY id DESC LIMIT 1', array(':userid'=>$loggedInUserId))[0]['id'];
+			return $postid;
 		} else {
 			die('Incorrect user!: Cant post on other users page');
 		}
@@ -26,6 +40,20 @@ class Post
 			DB::query('DELETE FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid'=>$postid, ':userid'=> $likerId));
 		}
 	}
+
+	public static function link_add($text) {
+		$text = explode(" ", $text);
+		$newstring = "";
+		foreach ($text as $word) {
+			if (substr($word, 0, 1) == "@") {
+				$newstring .= "<a href='profile.php?username=".substr($word, 1)."'>".htmlspecialchars($word)." </a>";
+			} else {
+				$newstring .= htmlspecialchars($word)." ";
+			}
+			
+		}
+		return $newstring;
+	}
 	public static function displayPosts($userid, $username, $loggedInUserId) {
 		//display all posts ordered by newest on top
 		$dbposts = DB::query('SELECT * FROM posts WHERE user_id=:userid ORDER BY id DESC', array(':userid' => $userid));
@@ -34,20 +62,28 @@ class Post
 			//check if user has already liked the post
 			if (!DB::query('SELECT post_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid'=>$p['id'], ':userid'=>$loggedInUserId))) {
 				//post are protected from parsing html
-				$posts .= htmlspecialchars($p['body']) . "
+				$posts .= "<img src='".$p['postimg']."'>".self::link_add($p['body'])."
 				<form action='profile.php?username=$username&postid=" . $p['id'] . "' method='post'>
 					<input type='submit' name='like' value='Like'>
 					<span>".$p['likes']." likes</span>
-				</form>
-				<hr /></br />
+				";
+				if ($userid == $loggedInUserId) {
+					$posts .= "<input type='submit' name='deletepost' value='x' />";
+				}
+				$posts .= "
+				</form><hr /></br />
 				";
 			} else {
-				$posts .= htmlspecialchars($p['body']) . "
+				$posts .= "<img src='".$p['postimg']."'>".self::link_add($p['body'])."
 				<form action='profile.php?username=$username&postid=" . $p['id'] . "' method='post'>
 					<input type='submit' name='unlike' value='Unlike'>
 					<span>".$p['likes']." likes</span>
-				</form>
-				<hr /></br />
+				";
+				if ($userid == $loggedInUserId) {
+					$posts .= "<input type='submit' name='deletepost' value='x' />";
+				}
+				$posts .= "
+				</form><hr /></br />
 				";
 			}
 		}

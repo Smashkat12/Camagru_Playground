@@ -2,6 +2,7 @@
 include('./classes/dbh.php');
 include('./classes/login.inc.php');
 include('./classes/post.inc.php');
+include('./classes/image.inc.php');
 
 $username = "";
 $verified = false;
@@ -47,12 +48,28 @@ if (isset($_GET['username'])) {
 			//echo "Already following!";
 			$isFollowing = true;
 		}
+		if (isset($_POST['deletepost'])) {
+			//check if post exist
+			if (DB::query('SELECT id FROM posts WHERE id=:postid AND user_id=:userid', array(':postid'=>$_GET['postid'], ':userid'=>$followerid))) {
+				//delete post
+				DB::query('DELETE FROM posts WHERE id=:postid AND user_id=:userid', array(':postid'=>$_GET['postid'], ':userid'=>$followerid));
+				//delete associated likes
+				DB::query('DELETE FROM post_likes WHERE post_id=:postid', array(':postid'=>$_GET['postid']));
+				echo "Post deleted!";
+			}
+		}
 		//Insert posts into DB
 		if (isset($_POST['post'])) {
-			Post::createPost($_POST['postbody'], Login::isLoggedin(), $userid);
+			if ($_FILES['postimg']['size'] == 0) {
+				Post::createPost($_POST['postbody'], Login::isLoggedin(), $userid);
+			} else {
+				$postid = Post::createImgPost($_POST['postbody'], Login::isLoggedin(), $userid);
+				Image::uploadImage('postimg',"UPDATE posts SET postimg=:postimg WHERE id=:postid", array(':postid'=>$postid));
+				
+			}
 		}
 		//Post LIKES
-		if (isset($_GET['postid'])) {
+		if (isset($_GET['postid']) && !isset($_POST['deletepost'])) {
 			Post::likePost($_GET['postid'], $followerid);
 		}
 		//display posts
@@ -77,8 +94,10 @@ if (isset($_GET['username'])) {
 	?>
 </form>
 
-<form action="profile.php?username=<?php echo $username; ?>" method="post">
+<form action="profile.php?username=<?php echo $username; ?>" method="post" enctype="multipart/form-data">
 	<textarea name="postbody" cols="80" rows="8"></textarea>
+	<br> Upload an image:
+	<input type="file" name="postimg">
 	<input type="submit" name="post" value="Post">
 </form>
 
