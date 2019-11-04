@@ -1,5 +1,4 @@
 <?php
-
 class Post
 {
 	public static function createPost($postbody, $loggedInUserId, $profileUserId)
@@ -9,13 +8,13 @@ class Post
 		}
 
 		if ($loggedInUserId == $profileUserId) {
-			if (count(self::notify($postbody)) != 0) {
-				foreach(self::notify($postbody) as $key => $n) {
+			if (count(notify::createNotification($postbody)) != 0) {
+				foreach(notify::createNotification($postbody) as $key => $n) {
 					$s = $loggedInUserId;
 					$r = DB::query('SELECT id FROM users WHERE username=:username', array(':username'=>$key))[0]['id'];
 					//if user exist, send them notification
 					if ($r != 0) {
-						DB::query('INSERT INTO notifications VALUES (NULL, :type, :receiver, :sender)', array(':type'=>$n, ':receiver'=>$r, ':sender'=>$s));
+						DB::query('INSERT INTO notifications VALUES (NULL, :type, :receiver, :sender, :extra)', array(':type'=>$n["type"], ':receiver'=>$r, ':sender'=>$s, ':extra'=>$n["extra"]));
 					}
 				}
 			}
@@ -31,13 +30,21 @@ class Post
 		}
 
 		if ($loggedInUserId == $profileUserId) {
-			DB::query('INSERT INTO posts VALUES (NULL, :postbody, NOW(), :userid, 0, NULL)', array(':postbody' => $postbody, ':userid' => $profileUserId));
-			$postid = DB::query('SELECT id FROM posts WHERE user_id=:userid ORDER BY id DESC LIMIT 1', array(':userid'=>$loggedInUserId))[0]['id'];
-			return $postid;
+			if (count(notify::createNotification($postbody)) != 0) {
+				foreach(notify::createNotification($postbody) as $key => $n) {
+					$s = $loggedInUserId;
+					$r = DB::query('SELECT id FROM users WHERE username=:username', array(':username'=>$key))[0]['id'];
+					//if user exist, send them notification
+					if ($r != 0) {
+						DB::query('INSERT INTO notifications VALUES (NULL, :type, :receiver, :sender, :extra)', array(':type'=>$n["type"], ':receiver'=>$r, ':sender'=>$s, ':extra'=>$n["extra"]));
+					}
+				}
+			}
 		} else {
 			die('Incorrect user!: Cant post on other users page');
 		}
 	}
+	//handles likes
 	public static function likePost ($postid, $likerId) {
 		//check if user has already liked the post or not
 		if (!DB::query('SELECT user_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $postid, ':userid' => $likerId))) {
@@ -50,17 +57,7 @@ class Post
 			DB::query('DELETE FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid'=>$postid, ':userid'=> $likerId));
 		}
 	}
-	//handles notifications
-	public static function notify($text) {
-		$text = explode(" ", $text);
-		$notify = array();
-		foreach ($text as $word) {
-			if (substr($word, 0, 1) == "@") {
-				$notify[substr($word, 1)] = 1;	
-			} 
-		}
-		return $notify;
-	}
+	
 	//handle @ mentions and links to user profile page
 	public static function link_add($text) {
 		$text = explode(" ", $text);

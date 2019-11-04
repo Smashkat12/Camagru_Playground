@@ -1,6 +1,7 @@
 <?php
 include('./classes/dbh.php');
 include('./classes/login.inc.php');
+include('./classes/notify.inc.php');
 
 $showTimeline = false;
 if (Login::isLoggedin()) {
@@ -15,7 +16,8 @@ if (DB::query('SELECT * FROM notifications WHERE receiver=:userid', array(':user
 	foreach($notifications as $n) {
 		if ($n['type'] == 1) {
 			$senderName = DB::query('SELECT username FROM users WHERE id=:senderid', array(':senderid'=>$n['sender']))[0]['username'];
-			echo $senderName." mentioned you in a post!<hr>";
+			$extra = json_decode($n['extra']);
+			echo $senderName." mentioned you in a post! - ".$extra->postbody."<hr>";
 		}
 	}
 }

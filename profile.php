@@ -3,6 +3,7 @@ include('./classes/dbh.php');
 include('./classes/login.inc.php');
 include('./classes/post.inc.php');
 include('./classes/image.inc.php');
+include('./classes/notify.inc.php');
 
 $username = "";
 $verified = false;
