@@ -3,6 +3,7 @@ include('./classes/dbh.php');
 include('./classes/login.inc.php');
 include('./classes/post.inc.php');
 include('./classes/comment.inc.php');
+include('./classes/notify.inc.php');
 
 $showTimeline = false;
 if (Login::isLoggedin()) {

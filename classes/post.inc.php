@@ -6,7 +6,7 @@ class Post
 		if (strlen($postbody) < 1 || strlen($postbody) > 160) {
 			die('Incorrect Length of text: 1 - 160 chars requred');
 		}
-
+		//check if its your profile - can only post if its your profile
 		if ($loggedInUserId == $profileUserId) {
 			if (count(notify::createNotification($postbody)) != 0) {
 				foreach(notify::createNotification($postbody) as $key => $n) {
@@ -40,6 +40,9 @@ class Post
 					}
 				}
 			}
+			DB::query('INSERT INTO posts VALUES (NULL, :postbody, NOW(), :userid, 0, NULL)', array(':postbody'=>$postbody, ':userid'=>$profileUserId));
+            $postid = DB::query('SELECT id FROM posts WHERE user_id=:userid ORDER BY ID DESC LIMIT 1;', array(':userid'=>$loggedInUserId))[0]['id'];
+            return $postid;
 		} else {
 			die('Incorrect user!: Cant post on other users page');
 		}
@@ -51,6 +54,7 @@ class Post
 			DB::query('UPDATE posts SET likes=likes+1 WHERE id=:postid', array(':postid' => $postid));
 			//tell us which user liked the post
 			DB::query('INSERT INTO post_likes VALUES (NULL, :postid, :userid)', array(':postid' => $postid, ':userid' => $likerId));
+			notify::createNotification(NULL,$postid);
 		} else {
 			DB::query('UPDATE posts SET likes=likes-1 WHERE id=:postid', array(':postid' => $postid));
 			//tell us which user liked the post

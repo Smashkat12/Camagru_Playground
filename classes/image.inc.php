@@ -22,8 +22,9 @@ class Image {
 	$response = file_get_contents($imgurURL, false, $context);
 	//return json object
 	$response = json_decode($response);
-	
+	//get the url link to image from JSON as associative array
 	$preparams = array($formname=>$response->data->link);
+	//prepare arameters to match how parameters appear in the query
 	$params = $preparams + $params;
 
 	DB::query($query, $params);

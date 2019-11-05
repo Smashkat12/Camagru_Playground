@@ -12,6 +12,7 @@ class Comment {
 		} else {
 			//insert post into Db
 			DB::query('INSERT INTO comments VALUES (NULL, :comment, :userid, NOW(), :postid)', array(':comment'=>$commentBody, ':userid'=>$userId, ':postid'=>$postId));
+			notify::createNotification($commentBody,$postId);
 		}
 	}
 
