@@ -1,7 +1,15 @@
 <?php
 include('./classes/dbh.php');
 
-
+if (isset($_GET['token'])) {
+	$token = $_GET['token'];
+	if (DB::query('SELECT token FROM email_validation_token WHERE token=:token', array(':token'=>$token))) {
+		$userid = DB::query('SELECT user_id FROM email_validation_token WHERE token=:token', array(':token'=>$token))[0]['user_id'];
+		DB::query('UPDATE users SET userActive=1 WHERE id=:userid', array(':userid' => $userid));
+		DB::query('DELETE FROM email_validation_token WHERE token=:token', array(':token'=>$token));
+		echo "User successfully activated";
+	}
+}
 if(isset($_POST['login'])) {
 	$username = $_POST['username'];
 	$password = $_POST['password'];
