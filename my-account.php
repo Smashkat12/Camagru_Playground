@@ -1,6 +1,7 @@
 <?php
 include('./classes/dbh.php');
 include('./classes/login.inc.php');
+include('./classes/image.inc.php');
 
 if (Login::isLoggedin()) {
 	$userid = Login::isLoggedin();
