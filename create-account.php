@@ -8,7 +8,7 @@ if (isset($_POST['createaccount'])){
 	$password = $_POST['password'];
 	$email = $_POST['email'];
 	$crypto_strong = True;
-	$token = bin2hex(openssl_random_pseudo_bytes(64, $crypto_strong));
+	$token = sha1(bin2hex(openssl_random_pseudo_bytes(64, $crypto_strong)));
 
 	//check if username already exist
 	if (!DB::query('SELECT username FROM users WHERE username=:username', array(':username'=>$username))){
