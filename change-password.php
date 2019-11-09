@@ -38,11 +38,14 @@ if (Login::isLoggedin()) {
 
 					if (strlen($newpassword) >= 6 && strlen($newpassword) <= 60) {
 						DB::query('UPDATE users SET password=:newpassword WHERE id=:user_id', array(':newpassword' => password_hash($newpassword, PASSWORD_BCRYPT), ':user_id' => $user_id));
-						echo "Password changed succesfully!";
 						DB::query('DELETE FROM password_tokens WHERE user_id=:user_id', array('user_id' => $user_id));
+						header( "refresh:5;url=login.php" );
+  						echo 'Password changed succesfully! <br> You\'ll be redirected to login page in about 5 secs. If not, click <a href="login.php">here</a>.';
+					} else {
+						die("Invalid password length: password must be between 6 - 60 chars long");
 					}
 				} else {
-					echo "Password dont\'t match!";
+					die("Password dont\'t match!");
 				}
 			}
 		} else {
@@ -58,7 +61,7 @@ if (Login::isLoggedin()) {
 <form action="<?php if (!$tokenIsValid) {
 					echo 'change-password.php';
 				} else {
-					echo 'change-password.php?token='.$token.'';
+					echo 'change-password.php?token=' . $token . '';
 				} ?>" method="post">
 	<?php if (!$tokenIsValid) {
 		echo '<input type="password" name="oldpassword" value="" placeholder="Current Password ..."><p />';
