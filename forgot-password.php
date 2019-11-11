@@ -11,7 +11,7 @@ if (isset($_POST['resetpassword'])) {
 	$to = DB::query('SELECT email FROM users WHERE email=:email', array(':email'=>$email))[0]['email'];
 	if ($to) {
 		$subject = " Camagru Password Reset";
-		$message = "<a href='http://127.0.0.1:8080/Camagru/change-password.php?token=$token'>Validate Email</a>";
+		$message = "<a href='http://127.0.0.1:8080/Camagru/change-password.php?token=$token'>Reset Passwod</a>";
 		$headers = "From: camagru <admin@camagru.com>\r\n";
 		$headers .= "Reply-To: camagru <admin@camagru.com>\r\n";
 		$headers .= "Content-type: text/html\r\n";
