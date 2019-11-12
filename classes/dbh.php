@@ -2,7 +2,7 @@
 	class DB {
 		//Db connection
 		private static function connect() {
-			$pdo = new PDO('mysql:host=localhost;dbname=Camagru;charset=utf8', 'root', '123456');
+			$pdo = new PDO('mysql:host=localhost;dbname=Camagru;charset=utf8', 'root', '');
 			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			return $pdo;
 		}

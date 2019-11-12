@@ -4,9 +4,18 @@ error_reporting(E_ALL);
 ini_set("display_errors", "on");
 
 if (isset($_POST['createaccount'])){
+	$f_name = $_POST['first_name'];
+	$l_name = $_POST['last_name'];
 	$username = $_POST['username'];
-	$password = $_POST['password'];
-	$email = $_POST['email'];
+	$password = $_POST['u_pass'];
+	$email = $_POST['u_email'];
+	$country = $_POST['u_country'];
+	$gender = $_POST['u_gender'];
+	$rand = rand(1, 2);
+	if ($rand == 1)
+		$profile = "./images/user.png";
+	else
+		$profile = "./images/user_black.png";
 	$crypto_strong = True;
 	$token = sha1(bin2hex(openssl_random_pseudo_bytes(64, $crypto_strong)));
 
@@ -22,7 +31,7 @@ if (isset($_POST['createaccount'])){
 						//check if email exist in db
 						if (!DB::query('SELECT email FROM users WHERE email=:email', array(':email'=>$email))) {
 							//insert user in users table
-							DB::query('INSERT INTO users VALUES(NULL, :username, :password, :email, \'0\', NULL, 0)', array(':username'=>$username, ':password'=>password_hash($password, PASSWORD_BCRYPT), ':email'=>$email));
+							DB::query('INSERT INTO users VALUES(NULL, :f_name, :l_name, :username, :password, :email, \'0\', NULL, 0)', array(':f_name'=>$f_name, ':l_name'=>$l_name,':username'=>$username, ':password'=>password_hash($password, PASSWORD_BCRYPT), ':email'=>$email));
 							$userid = DB::query('SELECT * FROM users WHERE email=:email', array(':email'=>$email))[0]['id'];
 							//inserting token in email validation table
 							DB::query('INSERT INTO email_validation_token VALUES(NULL, :token, :userid)', array(':token'=>$token, ':userid'=>$userid));
