@@ -31,7 +31,7 @@ if (isset($_POST['createaccount'])){
 						//check if email exist in db
 						if (!DB::query('SELECT email FROM users WHERE email=:email', array(':email'=>$email))) {
 							//insert user in users table
-							DB::query('INSERT INTO users VALUES(NULL, :f_name, :l_name, :username, :password, :email, \'0\', NULL, 0)', array(':f_name'=>$f_name, ':l_name'=>$l_name,':username'=>$username, ':password'=>password_hash($password, PASSWORD_BCRYPT), ':email'=>$email));
+							DB::query('INSERT INTO users VALUES(NULL, :f_name, :l_name, :username, :password, :email, \'0\', :picture, 0, :country, :gender)', array(':f_name'=>$f_name, ':l_name'=>$l_name,':username'=>$username, ':password'=>password_hash($password, PASSWORD_BCRYPT), ':email'=>$email, ':picture'=>$profile, ':country'=>$country, ':gender'=>$gender));
 							$userid = DB::query('SELECT * FROM users WHERE email=:email', array(':email'=>$email))[0]['id'];
 							//inserting token in email validation table
 							DB::query('INSERT INTO email_validation_token VALUES(NULL, :token, :userid)', array(':token'=>$token, ':userid'=>$userid));
@@ -65,10 +65,10 @@ if (isset($_POST['createaccount'])){
 }
 ?>
 
-<h1>Register</h1>
+<!-- <h1>Register</h1>
 <form action="create-account.php" method="post">
 	<input type="text" name="username" value=""	placeholder="Username ..."><p></p>
 	<input type="password" name="password" value="" placeholder="Password ..."><p></p>
 	<input type="email" name="email" value="" placeholder="someone@company.com"><p></p>
 	<input type="submit" name="createaccount" value="Create Account">
-</form>
+</form> -->

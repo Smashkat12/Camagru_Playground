@@ -56,7 +56,11 @@
 					</div><br>
 					<div class="input-group">
 						<span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
-						<input type="text" class="form-control" placeholder="First Name" name="last_name" required="required">
+						<input type="text" class="form-control" placeholder="Last Name" name="last_name" required="required">
+					</div><br>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+						<input type="text" class="form-control" placeholder="Username" name="username" required="required">
 					</div><br>
 					<div class="input-group">
 						<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
@@ -89,13 +93,13 @@
 							<option value="Other">Other</option>
 						</select>
 					</div><br>
-					<div class="input-group">
+					<!-- <div class="input-group">
 						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
 						<input type="date" class="form-control input-md" name="u_birthday" required="required">
-					</div><br>
+					</div><br> -->
 					<a style="text-decoration: none;float: right;color: #187FAB;" data-toggle="tooltip" title="Signin" href="login.php">Already have an account?</a><br><br>
 
-					<center><button id="signup" class="btn btn-info btn-lg" name="sign_up">Signup</button></center>
+					<center><button type="submit" id="signup" class="btn btn-info btn-lg" name="createaccount">Signup</button></center>
 					<?php include("create-account.php"); ?>
 				</form>
 			</div>
